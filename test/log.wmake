@@ -1,0 +1,4 @@
+wmakeLnIncludeAll error: file 'Make/options' does not exist
+wmake: 'Make' directory does not exist in /mnt/d/code/vscode_plugin/ofextension/test
+    Searching up directories tree for Make directory
+wmake error: could not find Make directory

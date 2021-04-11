@@ -24,11 +24,6 @@
 					"default": "/opt/openfoam8",
 					"description": "OpenFOAM安装目录"
 				},
-				"ofextension.OFsrc": {
-					"type":"string",
-					"default": "/opt/openfoam8/src",
-					"description": "OpenFOAM的src路径。默认路径一般是只读的，可以拷贝一份到用户目录，然后在此处指定，方便自定义源码或给源码注释等。"
-				},
 				"ofextension.GDBpath": {
 					"type": "string",
 					"default": "/usr/bin/gdb",

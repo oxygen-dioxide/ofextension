@@ -12,15 +12,6 @@ function get_includePath(log_wmake){
     return m;
 }
 
-// function filter_src(src_path){
-//     var OFpath = vscode.workspace.getConfiguration('ofextension').get('OFpath');
-//     var OFsrc = vscode.workspace.getConfiguration('ofextension').get('OFsrc');
-//     // 有的src使用OF的，有的是自定义的
-//     if(`${OFpath}/src`!==OFsrc  // 自定义了OFsrc，并且Make/files中还自定义了
-//         &&){
-//     }
-// }
-
 function sort_uniq_pp(arr){
     var fs=require('fs');
     // sort and uniq
@@ -120,18 +111,6 @@ function gen_cpp_conf(err,m_uniq,wkspacefd){
     }
 }
 
-// module.exports = function(context) {
-//     context.subscriptions.push(vscode.commands.registerCommand('test-taskprovider.ofInit', ()=>{
-//         var fs=require('fs');
-// 		var wkspacefd=vscode.workspace.workspaceFolders[0].uri.fsPath;
-// 		var logfile=`${wkspacefd}/log.wmake`;
-//         fs.access(`${wkspacefd}/.vscode/c_cpp_properties.json`,fs.constants.F_OK,(err)=>{
-//             var m = get_includePath(logfile);
-//             var m_uniq=sort_uniq_pp(m);
-//             gen_cpp_conf(err,m_uniq,wkspacefd);
-//         });
-//     }));
-// }
 
 module.exports = function(context) {
     // 注册HelloWord命令, 
@@ -143,13 +122,6 @@ module.exports = function(context) {
         const wkspaceFd = vscode.workspace.workspaceFolders[0].uri.fsPath;
 		const logfile=`${wkspaceFd}/log.wmake`;
 
-        // give OpenFOAM path
-        // var of_path = await vscode.window.showInputBox({
-        //     ignoreFocusOut: true, // 鼠标点击其他地方输入框不会消失
-        //     placeHolder: '/opt/openfoam8', // 在输入框内的提示信息
-        //     prompt: '请输入OpenFOAM路径，如/opt/openfoam8或/home/of/OpenFOAM/OpenFOA-8等，默认为/opt/openfoam8' // 在输入框下方的提示信息,
-        // });
-        // of_path  = of_path.length===0 ? '/opt/openfoam8': of_path;
         var conf=vscode.workspace.getConfiguration('ofextension');
         console.log('\n=== 当前配置 ===')
         var OFpath = conf.get('OFpath');
@@ -194,44 +166,5 @@ module.exports = function(context) {
             }
         });
         
-        // 从log.wmake中提取includePath
-        // const fs=require('fs');
-        // var data = fs.readFileSync('./log.wmake','utf8');
-        // var m = data.match(/\-I(\S*)/g);
-        // function uniq(arr){
-        //     arr.sort();
-        //     var hash=[arr[0]];
-        //     for (let i = 0; i < arr.length; i++) {
-        //         if (arr[i]!=hash[hash.length-1]) {
-        //             hash.push(arr[i]);
-        //         }
-        //     }
-        //     return hash;
-        // }
-        // function post_process(arr){
-        //     for (let i = 0; i < arr.length; i++) {
-        //         arr[i]=arr[i].replace('-I','');
-        //         arr[i]=arr[i].replace(/$/,'/*');
-        //     }
-        // }
-        // var m_uniq = uniq(m);
-        // post_process(m_uniq);
-        // var fs=require('fs');
-		// var wkspacefd=vscode.workspace.workspaceFolders[0].uri.fsPath;
-
-        // fs.access(`${wkspaceFd}/.vscode/c_cpp_properties.json`,fs.constants.F_OK,(err)=>{
-        //     var m = get_includePath(logfile);
-        //     var m_uniq=sort_uniq_pp(m);
-        //     gen_cpp_conf(err,m_uniq,wkspaceFd);
-        // });
-
-
-        // var gdb_path = await vscode.window.showInputBox({
-        //     ignoreFocusOut: true, // 鼠标点击其他地方输入框不会消失
-        //     placeHolder: '/usr/bin/gdb', // 在输入框内的提示信息
-        //     prompt: '请输入gdb路径。默认使用系统中的gdb，如果自己想使用自己编译的gdb，可在此处指定。' // 在输入框下方的提示信息,
-        // });
-        // gdb_path = gdb_path.length===0? '/usr/bin/gdb': gdb_path;
-        // console.log('gdb路径： '+gdb_path);
     }));
 };

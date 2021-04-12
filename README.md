@@ -1,65 +1,30 @@
 # ofextension README
+本插件基于C/C++插件，用于快速配置环境以适配OpenFOAM求解器代码。
+## 快速开始
+- 在插件设置中指定OpenFOAM和gdb的路径；
+![基本设置](images/ofextension-setting.png)
+- 按`F1`或`Ctrl+Shift+P`打开命令面板，搜索并运行`ofInit`命令；
+![ofInit](images/ofextension-ofInit.png)
+- 调试前初始化算例（如清理算例、网格生成等，这很关键！），然后按键`F5`或通过调试面板启动调试。
 
-This is the README for your extension "ofextension". After writing up a brief description, we recommend including the following sections.
+## 特性
+- 一键预编译，提取includePath，自动添加到`c_cpp_properties.json`文件中。
+- `.vscode/tasks.json`中添加task，用于OpenFOAM编译（通过`Ctrl+Shift+B`即可一键编译）。
+- 配置`.vscode/launch.json`，用于OpenFOAM调试（通过`F5`或在调试面板中启用）。  
+- ...
 
-## Features
+## 要求
+调试功能依赖于`gdb`，可以通过系统包管理器安装，也可以自行编译并在插件的设置中指定路径。
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
-
-For example if there is an image subfolder under your extension project workspace:
-
-\!\[feature X\]\(images/feature-x.png\)
-
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
-
-## Requirements
-
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
-
-## Extension Settings
-
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
-
-For example:
-
-This extension contributes the following settings:
-
-* `myExtension.enable`: enable/disable this extension
-* `myExtension.thing`: set to `blah` to do something
+## 插件设置
+插件设置支持指定OpenFOAM的路径`OFpath`，gdb的路径`GDBpath`等。
 
 ## Known Issues
-
-Calling out known issues can help limit users opening duplicate issues against your extension.
+待添加。
 
 ## Release Notes
+### 0.0.1
+实现基本功能。
 
-Users appreciate release notes as you update your extension.
-
-### 1.0.0
-
-Initial release of ...
-
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
-
------------------------------------------------------------------------------------------------------------
-
-## Working with Markdown
-
-**Note:** You can author your README using Visual Studio Code.  Here are some useful editor keyboard shortcuts:
-
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux)
-* Toggle preview (`Shift+CMD+V` on macOS or `Shift+Ctrl+V` on Windows and Linux)
-* Press `Ctrl+Space` (Windows, Linux) or `Cmd+Space` (macOS) to see a list of Markdown snippets
-
-### For more information
-
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
 
 **Enjoy!**

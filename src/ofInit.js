@@ -233,9 +233,15 @@ async function add_launch(wkspaceFd,OFpath,GDBpath,sh){
     // 创建launch.json文件
     // - 从Make/files中提取可执行文件的路径
     var fc=fs.readFileSync(`${wkspaceFd}/Make/files`,'utf8');
+    try {
+        cp.execSync(`chmod +x ${wkspaceFd}/.vscode/of-gdb.sh`,{cwd:wkspaceFd,shell:sh,encoding:'utf8'})
+        console.log('success: chmod +x of-gdb.sh');
+    } catch (error) {
+        console.log('fail: chmod +x of-gdb.sh');
+    }
     var program = fc.match(/EXE\s*=\s*(.*)/)[1].replace(/\(|\)/g,'');
     var cmd = `source ${OFpath}/etc/bashrc 2>&1 > /dev/null; echo ${program}`;
-    program =cp.execSync(cmd,{cwd:'.',shell:sh,encoding:'utf8'})
+    program =cp.execSync(cmd,{cwd:wkspaceFd,shell:sh,encoding:'utf8'})
     program = program.trim();
     var launch_obj= {
                 "name": "ofextension: debug solver",

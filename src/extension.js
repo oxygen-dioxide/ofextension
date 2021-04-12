@@ -16,17 +16,10 @@ function activate(context) {
 	require('./ofInit')(context); // ofInit 
 	// context.require('./ofDebugConf')(context); // ofInit 
 
-	// The command has been defined in the package.json file
-	// Now provide the implementation of the command with  registerCommand
-	// The commandId parameter must match the command field in package.json
-	let disposable = vscode.commands.registerCommand('ofextension.helloWorld', function () {
-		// The code you place here will be executed every time your command is executed
-
-		// Display a message box to the user
-		vscode.window.showInformationMessage('Hello World from OFextension!');
-	});
-
-	context.subscriptions.push(disposable);
+	// let disposable = vscode.commands.registerCommand('ofextension.helloWorld', function () {
+	// 	vscode.window.showInformationMessage('Hello World from OFextension!');
+	// });
+	// context.subscriptions.push(disposable);
 
 }
 

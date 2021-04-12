@@ -2,6 +2,9 @@
 	"name": "ofextension",
 	"displayName": "OFextension",
 	"description": "OpenFOAM求解器插件。可自动配置includePath（基于C/C++插件），实现OpenFOAM求解代码跳转、悬停提示；可自动配置调试相关选项，用于gdb调试代码。",
+	"keywords": ["OpenFOAM","debug","configuration"],
+	"icon": "images/icon.png",
+	"publisher": "ZhuoYang",
 	"version": "0.0.1",
 	"engines": {
 		"vscode": "^1.55.0"
@@ -32,10 +35,6 @@
 			}
 		},
 		"commands": [
-			{
-				"command": "ofextension.helloWorld",
-				"title": "Hello World"
-			},
 			{
 				"command": "ofextension.ofInit",
 				"title": "ofInit"

@@ -1,19 +1,21 @@
 // const { exit } = require('node:process');
 const vscode = require('vscode');
+const fs=require('fs');
+const cp=require('child_process');
+const path=require('path');
 
 // for(let key in vscode){ 
 // 	console.log('key:', key);
 // }
 
 function get_includePath(log_wmake){
-    const fs=require('fs');
     var data = fs.readFileSync(log_wmake,'utf8');
     var m = data.match(/\-I(\S*)/g);
     return m;
 }
 
 function sort_uniq_pp(arr){
-    var fs=require('fs');
+    // var fs=require('fs');
     // sort and uniq
     arr.sort();
     // var hash=[arr[0]];
@@ -74,7 +76,6 @@ function sort_uniq_pp(arr){
 
 
 function gen_cpp_conf(err,m_uniq,wkspacefd){
-    const fs=require('fs');
     console.log(m_uniq);
     if(err){
         console.log('---配置文件.vscode/c_cpp_properties.json 不存在，重新创建')
@@ -112,12 +113,194 @@ function gen_cpp_conf(err,m_uniq,wkspacefd){
 }
 
 
+function check_exist(f_or_fd, tp){
+    // 父目录是否存在，比如.vscode，若不存在，则创建
+    var father_path = path.resolve(f_or_fd,'..');
+    try {
+        fs.accessSync(father_path,fs.constants.F_OK);
+        console.log('父目录存在');
+    } catch (error) {
+        console.log('父目录不存在，递归创建');
+        fs.mkdirSync(father_path,{recursive: true});
+    }
+
+    // 文件或者文件夹是否存在
+    // tp=0，文件；tp=1，文件夹
+    try {
+        fs.accessSync(f_or_fd,fs.constants.F_OK);
+        console.log(`${f_or_fd} 已存在`);
+        return 1;
+    } catch (err) {
+        console.log(`${f_or_fd} 不存在`);
+        try {
+            if(tp===1){
+                fs.mkdirSync(f_or_fd);
+                console.log(f_or_fd+'创建成功');
+            }
+        } catch (error) {
+            console.log(f_or_fd+'创建失败');
+        }
+        return 0;
+    }
+}
+
+function add_task(wkspaceFd, OFpath){
+    var file=`${wkspaceFd}/.vscode/tasks.json`;
+    // 文件检查
+    var isExist = check_exist(file,0);
+
+    var task_obj={
+        "type": "shell",
+        "label": "ofextension: build solver",
+        "command": [
+            "cd ${workspaceFolder};",
+            `source ${OFpath}/etc/bashrc; export WM_COMPILE_OPTION=Debug;`,
+            "wmake 2>&1 | tee log.wmake"
+        ],
+        "args": [],
+        "options": {},
+        "problemMatcher": [],
+        "group": {
+            "kind": "build",
+            "isDefault": true
+        }
+    };
+
+    var fjson=undefined;
+    // task
+    if (isExist){  // 若已存在
+        console.log(`${file}已存在，更新task`);
+        var fraw = fs.readFileSync(file)
+        fjson=JSON.parse(fraw);
+        // 检查是否存在
+        var taski=undefined;
+        var flag=1; //标志量，删除后，fjson已改变，需要重启循环
+        while (flag) {
+            if (fjson.tasks.length) {
+                for (let i = 0; i < fjson.tasks.length; i++) {
+                    taski = fjson.tasks[i];
+                    if(taski['type']==='shell' && taski['label']==='ofextension: build solver'){
+                        // delete fjson.tasks[i];
+                        fjson.tasks.splice(i,1); // 删除之，后面重新定义
+                        flag=1;
+                        console.log(fjson.tasks.length);
+                        break;
+                    }
+                    flag=0; // 顺利到达最后
+                }
+            }else{
+                flag=0;
+            }
+        }
+        // 删除现有的group default
+        for (let i = 0; i < fjson.tasks.length; i++) {
+            taski = fjson.tasks[i];
+            if(taski['group'].kind==='build' && taski['group'].isDefault ==='true'){
+                fjson.tasks['group'].isDefault='false'; // 取消其他默认任务
+            }
+        }
+        // 如果ofwmake已存在，则此时taski对应其引用
+        // 否则taski为空
+    } else{ //若不存在
+        console.log(`${file}不存在，重新创建并添加task`);
+        fjson={
+            "tasks":[],
+            "version": "2.0.0"};
+    }
+    fjson.tasks.push(task_obj);
+    var fjson_stringigy = JSON.stringify(fjson,null,2);
+    fs.writeFileSync(file,fjson_stringigy);
+}
+
+async function add_launch(wkspaceFd,OFpath,GDBpath,sh){
+    var file=`${wkspaceFd}/.vscode/launch.json`;
+    // var case_path=undefined; // 通过用户交互得到算例目录
+    var case_path=await vscode.window.showInputBox(
+        {
+            ignoreFocusOut: true,
+            placeHolder:`默认值为：${wkspaceFd}/debug_case，可后续将测试算例拷贝至该目录`,
+            prompt:'请输入测试算例的路径，用于调试（调试程序在测试算例中运行）',
+            value:`${wkspaceFd}/debug_case`
+            // validateInput: function(in_path){
+            //     return in_path;
+            // }
+        }
+    );
+    console.log('case_path: '+case_path);
+    // 创建of-debug.sh文件
+    var of_debug_str=`#!/bin/bash\n. ${OFpath}/etc/bashrc\n${GDBpath} "$@"`
+    fs.writeFileSync(`${wkspaceFd}/.vscode/of-gdb.sh`,of_debug_str);
+    // 创建launch.json文件
+    // - 从Make/files中提取可执行文件的路径
+    var fc=fs.readFileSync(`${wkspaceFd}/Make/files`,'utf8');
+    var program = fc.match(/EXE\s*=\s*(.*)/)[1].replace(/\(|\)/g,'');
+    var cmd = `source ${OFpath}/etc/bashrc 2>&1 > /dev/null; echo ${program}`;
+    program =cp.execSync(cmd,{cwd:'.',shell:sh,encoding:'utf8'})
+    program = program.trim();
+    var launch_obj= {
+                "name": "ofextension: debug solver",
+                "type": "cppdbg",
+                "request": "launch",
+                "program": program,
+                "args": [],
+                "stopAtEntry": true,
+                "cwd": case_path,
+                "environment": [],
+                "externalConsole": false,
+                "MIMode": "gdb",
+                "setupCommands": [
+                    {
+                        "description": "Enable pretty-printing for gdb",
+                        "text": "-enable-pretty-printing",
+                        "ignoreFailures": true
+                    }
+                ],
+                "preLaunchTask": "ofextension: build solver",
+                "miDebuggerPath": "${workspaceFolder}/.vscode/of-gdb.sh"
+            };
+
+    var isExist = check_exist(file,0);
+    var fjson=undefined;
+    if(isExist){
+        console.log(`${file}存在，更新configuration`);
+        var fraw=fs.readFileSync(file);
+        fjson=JSON.parse(fraw);
+        var confi=undefined;
+        var flag=1;
+        while(flag){
+            if (fjson.configurations.length) {
+                for (let i = 0; i < fjson.configurations.length; i++) {
+                    confi = fjson.configurations[i];
+                    if(confi['name']==='ofextension: debug solver'){
+                        // delete fjson.configurations[i];
+                        fjson.configurations.splice(i,1); // 删除之，后面重新定义
+                        flag=1;
+                        break;
+                    }
+                    flag=0;
+                }
+            }else{
+                flag=0;
+            }
+        }
+    }else{
+        console.log(`${file}不存在，重新创建并添加configuration`);
+        fjson={
+            "version": "0.2.0",
+            "configurations": []
+        };
+    }
+    fjson.configurations.push(launch_obj);
+    var fjson_stringigy=JSON.stringify(fjson,null,2);
+    fs.writeFileSync(file,fjson_stringigy);
+}
+
+
+
 module.exports = function(context) {
     // 注册HelloWord命令, 
     // 所有注册类的API执行后都需要将返回结果放到`context.subscriptions`中去
     context.subscriptions.push(vscode.commands.registerCommand('ofextension.ofInit', async () => {
-        const fs=require('fs')
-        const cp=require('child_process');
 
         const wkspaceFd = vscode.workspace.workspaceFolders[0].uri.fsPath;
 		const logfile=`${wkspaceFd}/log.wmake`;
@@ -165,6 +348,9 @@ module.exports = function(context) {
                 });
             }
         });
+
+        add_task(wkspaceFd,OFpath);
+        add_launch(wkspaceFd,OFpath,GDBpath,sh);
         
     }));
 };

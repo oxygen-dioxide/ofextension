@@ -12,12 +12,7 @@ function activate(context) {
 	// Use the console to output diagnostic information (console.log) and errors (console.error)
 	// This line of code will only be executed once when your extension is activated
 	console.log('Congratulations, your extension "ofextension" is now active!');
-	const wkspaceRoot=vscode.workspace.workspaceFolders[0].uri.fsPath;
-	const ofTaskProvider_1 = require('./ofTaskProvider');
-	vscode.tasks.registerTaskProvider(
-		'ofwmake',
-		new ofTaskProvider_1.ofTaskProvider(wkspaceRoot)
-	);
+	// const wkspaceRoot=vscode.workspace.workspaceFolders[0].uri.fsPath;
 	require('./ofInit')(context); // ofInit 
 	// context.require('./ofDebugConf')(context); // ofInit 
 

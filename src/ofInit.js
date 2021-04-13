@@ -25,6 +25,8 @@ function sort_uniq_pp(arr){
     for (let i = 0; i < arr.length; i++) {
         // 添加第1个元素
         arr[i]=arr[i].replace('-I','');
+        var father_path=path.resolve(vscode.workspace.workspaceFolders[0].uri.fsPath,'..');
+        arr[i]=arr[i].replace('..',father_path);
         if (hash.length===0 && arr[i]!=='.'){
             try {
                 fs.accessSync(arr[i],fs.constants.F_OK);

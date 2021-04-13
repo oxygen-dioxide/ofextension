@@ -2,9 +2,9 @@
 本插件基于C/C++插件，用于快速配置环境以适配OpenFOAM求解器代码。
 ## 快速开始
 - 在插件设置中指定OpenFOAM和gdb的路径；
-![基本设置](images/ofextension-setting.png)
+查看：images/ofextension-setting.png
 - 按`F1`或`Ctrl+Shift+P`打开命令面板，搜索并运行`ofInit`命令；
-![ofInit](images/ofextension-ofInit.png)
+查看: images/ofextension-ofInit.png
 - 调试前初始化算例（如清理算例、网格生成等，这很关键！），然后按键`F5`或通过调试面板启动调试。
 
 ## 特性
@@ -25,6 +25,8 @@
 ## Release Notes
 ### 0.0.1
 实现基本功能。
+### 0.0.2
+修复bug：路径检测中将替换..为绝对路径。
 
 
 **Enjoy!**

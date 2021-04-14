@@ -1,12 +1,8 @@
-// const { exit } = require('node:process');
 const vscode = require('vscode');
 const fs=require('fs');
 const cp=require('child_process');
 const path=require('path');
 
-// for(let key in vscode){ 
-// 	console.log('key:', key);
-// }
 
 function get_includePath(log_wmake){
     var data = fs.readFileSync(log_wmake,'utf8');
@@ -25,8 +21,11 @@ function sort_uniq_pp(arr){
     for (let i = 0; i < arr.length; i++) {
         // 添加第1个元素
         arr[i]=arr[i].replace('-I','');
-        var father_path=path.resolve(vscode.workspace.workspaceFolders[0].uri.fsPath,'..');
-        arr[i]=arr[i].replace('..',father_path);
+        var wkspaceFd = vscode.workspace.workspaceFolders[0].uri.fsPath;
+        var father_path=path.resolve(wkspaceFd,'..');
+        // 相对路径转绝对路径
+        arr[i]=arr[i].replace('./', wkspaceFd+'/');
+        arr[i]=arr[i].replace('../',father_path+'/');
         if (hash.length===0 && arr[i]!=='.'){
             try {
                 fs.accessSync(arr[i],fs.constants.F_OK);
@@ -151,13 +150,14 @@ function add_task(wkspaceFd, OFpath){
     // 文件检查
     var isExist = check_exist(file,0);
 
-    var task_obj={
+    var conf=vscode.workspace.getConfiguration('ofextension');
+    var task_obj_build={
         "type": "shell",
         "label": "ofextension: build solver",
         "command": [
             "cd ${workspaceFolder};",
-            `source ${OFpath}/etc/bashrc; export WM_COMPILE_OPTION=Debug;`,
-            "wmake 2>&1 | tee log.wmake"
+            `source ${OFpath}/etc/bashrc ${conf.get('OFbuildopt')};`,
+            "wmake 2>&1 | tee log.wmake_opt"
         ],
         "args": [],
         "options": {},
@@ -166,6 +166,18 @@ function add_task(wkspaceFd, OFpath){
             "kind": "build",
             "isDefault": true
         }
+    };
+    var task_obj_debug={
+        "type": "shell",
+        "label": "ofextension: debug solver",
+        "command": [
+            "cd ${workspaceFolder};",
+            `source ${OFpath}/etc/bashrc ${conf.get('OFdebugopt')};`,
+            "wmake 2>&1 | tee log.wmake_debug"
+        ],
+        "args": [],
+        "options": {},
+        "problemMatcher": []
     };
 
     var fjson=undefined;
@@ -181,7 +193,8 @@ function add_task(wkspaceFd, OFpath){
             if (fjson.tasks.length) {
                 for (let i = 0; i < fjson.tasks.length; i++) {
                     taski = fjson.tasks[i];
-                    if(taski['type']==='shell' && taski['label']==='ofextension: build solver'){
+                    if((taski['type']==='shell' && taski['label']==='ofextension: build solver') 
+                     ||(taski['type']==='shell' && taski['label']==='ofextension: debug solver')){
                         // delete fjson.tasks[i];
                         fjson.tasks.splice(i,1); // 删除之，后面重新定义
                         flag=1;
@@ -209,7 +222,8 @@ function add_task(wkspaceFd, OFpath){
             "tasks":[],
             "version": "2.0.0"};
     }
-    fjson.tasks.push(task_obj);
+    fjson.tasks.push(task_obj_build);
+    fjson.tasks.push(task_obj_debug);
     var fjson_stringigy = JSON.stringify(fjson,null,2);
     fs.writeFileSync(file,fjson_stringigy);
 }
@@ -263,7 +277,7 @@ async function add_launch(wkspaceFd,OFpath,GDBpath,sh){
                         "ignoreFailures": true
                     }
                 ],
-                "preLaunchTask": "ofextension: build solver",
+                "preLaunchTask": "ofextension: debug solver",
                 "miDebuggerPath": "${workspaceFolder}/.vscode/of-gdb.sh"
             };
 

@@ -256,8 +256,11 @@ async function add_launch(wkspaceFd,OFpath,GDBpath,sh){
         console.log('fail: chmod +x of-gdb.sh');
     }
     var program = fc.match(/EXE\s*=\s*(.*)/)[1].replace(/\(|\)/g,'');
-    var cmd = `source ${OFpath}/etc/bashrc 2>&1 > /dev/null; echo ${program}`;
+    var conf=vscode.workspace.getConfiguration('ofextension');
+    var cmd = `source ${OFpath}/etc/bashrc ${conf.get('OFdebugopt')} 2>&1 > /dev/null; echo ${program}`;
+    console.log('get program: '+cmd);
     program =cp.execSync(cmd,{cwd:wkspaceFd,shell:sh,encoding:'utf8'})
+    console.log('the program: '+program);
     program = program.trim();
     var launch_obj= {
                 "name": "ofextension: debug solver",
@@ -350,10 +353,10 @@ module.exports = function(context) {
         console.log('\n=== 预编译，获取wmake日志 ===');
         // Note: 务必修改Make/files文件，使编译结果保存到用户目录
         // cp.exec(`sed -i "s~FOAM_APPBIN~FOAM_USER_APPBIN~g" ${wkspaceFd}/Make/files`);
-        var cmd=`source ${OFpath}/etc/bashrc ;export WM_COMPILE_OPTION=Debug `; // source ...bashrc 状态码为1，因此不能用&&连接命令
+        var cmd=`source ${OFpath}/etc/bashrc ${conf.get('OFbuildopt')}`; // source ...bashrc 状态码为1，因此不能用&&连接命令
         var sh=vscode.env.shell
         console.log(`用于执行命令的shell：${sh}`)
-        cmd+='&& wclean &&  wmake 2>&1 | tee log.wmake'
+        cmd+='; wclean &&  wmake 2>&1 | tee log.wmake'
         console.log(`执行预编译命令：${cmd}`)
         // var stdout = cp.exec(cmd,{cwd:wkspaceFd,shell:sh})
         // console.log('预编译：\n',stdout);

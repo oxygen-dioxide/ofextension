@@ -34,7 +34,7 @@
 				},
 				"ofextension.OFdebugopt": {
 					"type": "string",
-					"default": "WM_MPLIB=OPENMPI WM_NCOMPROCS=2 WM_COMPILE_OPTION=Debug",
+					"default": "WM_MPLIB=OPENMPI WM_NCOMPROCS=2; export WM_COMPILE_OPTION=Debug",
 					"description": "指定调试前的编译选项。"
 				},
 				"ofextension.GDBpath": {

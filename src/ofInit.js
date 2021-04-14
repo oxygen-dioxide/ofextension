@@ -230,6 +230,7 @@ function add_task(wkspaceFd, OFpath){
 
 async function add_launch(wkspaceFd,OFpath,GDBpath,sh){
     var file=`${wkspaceFd}/.vscode/launch.json`;
+    var conf=vscode.workspace.getConfiguration('ofextension');
     // var case_path=undefined; // 通过用户交互得到算例目录
     var case_path=await vscode.window.showInputBox(
         {
@@ -244,7 +245,7 @@ async function add_launch(wkspaceFd,OFpath,GDBpath,sh){
     );
     console.log('case_path: '+case_path);
     // 创建of-debug.sh文件
-    var of_debug_str=`#!/bin/bash\n. ${OFpath}/etc/bashrc\n${GDBpath} "$@"`
+    var of_debug_str=`#!/bin/bash\n. ${OFpath}/etc/bashrc ${conf.get('OFdebugopt')}\n${GDBpath} "$@"`
     fs.writeFileSync(`${wkspaceFd}/.vscode/of-gdb.sh`,of_debug_str);
     // 创建launch.json文件
     // - 从Make/files中提取可执行文件的路径
@@ -256,7 +257,6 @@ async function add_launch(wkspaceFd,OFpath,GDBpath,sh){
         console.log('fail: chmod +x of-gdb.sh');
     }
     var program = fc.match(/EXE\s*=\s*(.*)/)[1].replace(/\(|\)/g,'');
-    var conf=vscode.workspace.getConfiguration('ofextension');
     var cmd = `source ${OFpath}/etc/bashrc ${conf.get('OFdebugopt')} 2>&1 > /dev/null; echo ${program}`;
     console.log('get program: '+cmd);
     program =cp.execSync(cmd,{cwd:wkspaceFd,shell:sh,encoding:'utf8'})

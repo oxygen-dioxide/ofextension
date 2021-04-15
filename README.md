@@ -12,11 +12,18 @@ VSCode的OpenFOAM插件。本插件依托于C/C++插件，用于快速部署开�
 ![基本设置](images/ofextension-setting.png)
 务必确保在`OFpath`中正确指定了自己的OpenFOAM路径。如果不需要调试，就不用管`GDBpath`
 - 按`F1`或`Ctrl+Shift+P`打开命令面板，搜索并运行`ofInit`命令；  
-
 ![运行ofInit命令](images/ofextension-ofInit.png)
 - 调试前请初始化算例（如清理算例、网格生成等，这很关键！），然后按键`F5`或通过调试面板启动调试。
 
-**视频演示**
+### 2.1 特性展示
+- 语法高亮与鼠标悬浮提示  
+![语法高亮与鼠标悬浮提示](images/ofextension-hover_prompt.png)
+- 代码跳转 (<font color=red>阅读源码很有用！</font>)
+![代码跳转](images/ofextension-jump_to_definition.gif)
+- 调试  
+![调试](images/ofextension-debug.png)
+
+### 2.2 视频演示
 
 [VS Code的OpenFOAM插件(OFextension)演示](https://www.bilibili.com/video/BV1RX4y1g752/)
 
@@ -46,23 +53,22 @@ $ cd ..
 按F1，搜索并运行ofInit。等待片刻，`.vscode`中会自动生成相关配置文件。这里需要查看相关的日志文件`log.wmake*`，确保没有报错。
 
 
-**原理参考**
+### 2.3 相关参考
 
 - [利用VS Code阅读源码及调试OpenFOAM](http://www.xfy-learning.com/2021/01/05/%E5%88%A9%E7%94%A8VS-Code%E9%98%85%E8%AF%BB%E6%BA%90%E7%A0%81%E5%8F%8A%E8%B0%83%E8%AF%95OpenFOAM/)
 - [OFprimer: 6.2 Debugging and profling](https://www.researchgate.net/publication/267569764_The_OpenFOAM_Technology_Primer)  
 
 ## 3 安装教程
 ### 3.1 依赖
-- C/C++插件
+- OpenFOAM需要在Linux平台使用，本插件适用于Linux平台。使用Remote-WSL或者Remote-SSH连接WSL或者远程Linux服务器也可。
+- C/C++插件，用于高亮显示、跳转、鼠标悬浮提示等。
 ```
 Name: C/C++  
 Id: ms-vscode.cpptools  
 Description: C/C++ IntelliSense, debugging, and code browsing.  
 Publisher: Microsoft  
 ```
-- 调试需要gdb  
-
-可以通过系统包管理器安装，比如Ubuntu下：
+- 调试需要gdb。 可以通过系统包管理器安装，比如Ubuntu下：
 ```sh 
 sudo apt update
 sudo apt install gdb -y

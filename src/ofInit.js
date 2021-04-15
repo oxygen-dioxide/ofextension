@@ -226,6 +226,7 @@ function add_task(wkspaceFd, OFpath){
     fjson.tasks.push(task_obj_debug);
     var fjson_stringigy = JSON.stringify(fjson,null,2);
     fs.writeFileSync(file,fjson_stringigy);
+    vscode.window.showInformationMessage('OFextension-ofInit: 成功更新.vscode/tasks.json');
 }
 
 async function add_launch(wkspaceFd,OFpath,GDBpath,sh){
@@ -318,6 +319,7 @@ async function add_launch(wkspaceFd,OFpath,GDBpath,sh){
     fjson.configurations.push(launch_obj);
     var fjson_stringigy=JSON.stringify(fjson,null,2);
     fs.writeFileSync(file,fjson_stringigy);
+    vscode.window.showInformationMessage('OFextension-ofInit: 成功更新.vscode/launch.json');
 }
 
 
@@ -348,6 +350,7 @@ module.exports = function(context) {
             console.log(`Yes, ${file_Makefiles} 存在。`)
         } catch (err) {
             console.log(`No, ${file_Makefiles} 不存在，请切换到求解器目录。`)
+            vscode.window.showErrorMessage('Make/files不存在，请切换到求解器目录！');
         }
         //     // 预编译，得到log.wmake文件用于提取includePath 
         console.log('\n=== 预编译，获取wmake日志 ===');
@@ -370,6 +373,7 @@ module.exports = function(context) {
                     var m = get_includePath(logfile);
                     var m_uniq=sort_uniq_pp(m);
                     gen_cpp_conf(err,m_uniq,wkspaceFd);
+                    vscode.window.showInformationMessage('OFextension-ofInit: 成功更新includePath');
                 });
             }
         });

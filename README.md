@@ -12,7 +12,7 @@ VSCode的OpenFOAM插件。本插件依托于C/C++插件，用于快速部署开�
 ![基本设置](images/ofextension-setting.png)
 务必确保在`OFpath`中正确指定了自己的OpenFOAM路径。如果不需要调试，就不用管`GDBpath`
 - 按`F1`或`Ctrl+Shift+P`打开命令面板，搜索并运行`ofInit`命令；  
-![运行ofInit命令](images/ofextension-ofInit.png)
+![运行ofInit命令](images/ofextension-ofInit.gif)
 - 调试前请初始化算例（如清理算例、网格生成等，这很关键！），然后按键`F5`或通过调试面板启动调试。
 
 ### 2.1 特性展示

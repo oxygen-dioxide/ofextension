@@ -1,8 +1,11 @@
 # OFextension
 
 ## 1 介绍
+
 VSCode的OpenFOAM插件。本插件依托于C/C++插件，用于快速部署开发环境以适配OpenFOAM求解器代码。
 代码跳转、悬浮提示、调试等功能是写求解器所必备的功能，本插件基于自己的一点理解所开发，对小白友好，一键完成部署。
+
+[代码仓库](https://gitee.com/xfygogo/ofextension)
 
 ## 2 快速开始
 - 在插件设置中指定OpenFOAM和gdb的路径 (Settings-> Extensions: OFextension中的`OFpath`和`GDBpath`)；

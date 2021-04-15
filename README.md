@@ -8,15 +8,43 @@ VSCode的OpenFOAM插件。本插件依托于C/C++插件，用于快速部署开�
 [代码仓库](https://gitee.com/xfygogo/ofextension)
 
 ## 2 快速开始
-- 在插件设置中指定OpenFOAM和gdb的路径 (Settings-> Extensions: OFextension中的`OFpath`和`GDBpath`)；
+- 在插件设置中指定OpenFOAM和gdb的路径 (Settings-> Extensions: OFextension中的`OFpath`和`GDBpath`)；  
 ![基本设置](images/ofextension-setting.png)
-- 按`F1`或`Ctrl+Shift+P`打开命令面板，搜索并运行`ofInit`命令；
+务必确保在`OFpath`中正确指定了自己的OpenFOAM路径。如果不需要调试，就不用管`GDBpath`
+- 按`F1`或`Ctrl+Shift+P`打开命令面板，搜索并运行`ofInit`命令；  
+
 ![运行ofInit命令](images/ofextension-ofInit.png)
 - 调试前请初始化算例（如清理算例、网格生成等，这很关键！），然后按键`F5`或通过调试面板启动调试。
 
 **视频演示**
 
 [VS Code的OpenFOAM插件(OFextension)演示](https://www.bilibili.com/video/BV1RX4y1g752/)
+
+- Step1. 拷贝求解器， 修改Make/files（注意：保证EXE输出到有权限的路径下）
+```sh
+# 激活OpenFOAM环境
+$ of8
+$ foamVersion
+OpenFOAM-8
+# 切换到求解器目录
+$ run
+$ cd ../solver
+# 拷贝要调试的求解器和测试算例
+$ cp $FOAM_SOLVERS/incompressible/icoFoam -r .
+$ cd icoFOAM
+$ sed -i 's/FOAM_APPBIN/FOAM_USER_APPBIN/g' 
+```
+
+- Step2. 拷贝算例、算例初始化（网格生成等，每次调试前都需要注意算例的状态）
+```sh
+$ cp $FOAM_TUTORIALS/incompressible/icoFOAM/cavity/cavity -r debug_case
+$ cd debug_case
+$ foamCleanTutorials && blockMesh 2>&1 | tee log.blockMesh
+$ cd ..
+```
+- Step3. 运行ofInit。
+按F1，搜索并运行ofInit。等待片刻，`.vscode`中会自动生成相关配置文件。这里需要查看相关的日志文件`log.wmake*`，确保没有报错。
+
 
 **原理参考**
 

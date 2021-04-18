@@ -1,4 +1,11 @@
 该项目所有重要更改都会在此文件中标注。本文件使用[standard-version](https://github.com/conventional-changelog/standard-version)生成。
+### [0.0.7](https://gitee.com/xfygogo/ofextension/compare/v0.0.6...v0.0.7) (2021-04-18)
+
+
+### Docs Update
+
+* 修改OFdebugopt和OFbuildopt默认值；文档中条件调试重要说明 ([752a3f8](https://gitee.com/xfygogo/ofextension/commit/752a3f89bbc1c7cb085bb3b8506f30d96875e618))
+
 ### 0.0.6 (2021-04-18)
 
 

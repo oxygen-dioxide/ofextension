@@ -32,12 +32,12 @@
 				},
 				"ofextension.OFbuildopt": {
 					"type": "string",
-					"default": "WM_MPLIB=OPENMPI WM_NCOMPROCS=2",
+					"default": "WM_NCOMPROCS=2",
 					"description": "指定编译选项，比如WM_COMPILER、WM_MPLIB、WM_NCOMPPROCS、FOAMY_HEX_MESH、WM_NCOMPPROCS、WM_COMPILE_OPTION等，用于覆盖默认选项。各选项的含义，参考OpenFOAM的bashrc文件。"
 				},
 				"ofextension.OFdebugopt": {
 					"type": "string",
-					"default": "WM_MPLIB=OPENMPI WM_NCOMPROCS=2; export WM_COMPILE_OPTION=Debug",
+					"default": "WM_NCOMPROCS=2; export WM_COMPILE_OPTION=Debug",
 					"description": "指定调试前的编译选项。"
 				},
 				"ofextension.GDBpath": {

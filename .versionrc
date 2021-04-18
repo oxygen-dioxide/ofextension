@@ -1,0 +1,14 @@
+{
+    "types": [
+        {"type": "feat", "section": "Features"},
+        {"type": "fix", "section": "Bug Fixes"},
+        {"type": "chore", "hidden": true},
+        {"type": "docs", "section": "Docs Update"},
+        {"type": "style", "hidden": true},
+        {"type": "refactor", "hidden": true},
+        {"type": "perf", "hidden": true},
+        {"type": "test", "hidden": true}
+    ],
+    "header": "该项目所有重要更改都会在此文件中标注。本文件使用[standard-version](https://github.com/conventional-changelog/standard-version)生成。"
+
+}
